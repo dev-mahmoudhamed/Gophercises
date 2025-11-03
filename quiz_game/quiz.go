@@ -6,19 +6,21 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
 func main() {
-	filePath := "problems.csv"
+
+	filePath := flag.String("csv", "problems.csv", "a csv file in the format of 'question,answer'")
+	limit := flag.Int("limit", 30, "the time limit for the quiz in seconds")
 	totalQuestions := 0
 	rightAnswers := 0
-	limit := flag.Int("limit", 30, "the time limit for the quiz in seconds")
 	flag.Parse()
 
-	f, err := os.Open(filePath)
+	f, err := os.Open(*filePath)
 	if err != nil {
-		log.Fatal("Unable to read input file "+filePath, err)
+		log.Fatal("Unable to read input file "+*filePath, err)
 	}
 	defer f.Close()
 
@@ -33,9 +35,9 @@ func main() {
 
 	for i, record := range records {
 		question := record[0]
-		answer := record[1]
+		answer := strings.TrimSpace(record[1])
 
-		fmt.Printf("Problem #%d: %s = ", i, question)
+		fmt.Printf("Problem #%d: %s = ", i+1, question)
 
 		answerCh := make(chan string)
 		go readUserAnswer(answerCh)
@@ -58,6 +60,6 @@ func main() {
 
 func readUserAnswer(ch chan<- string) {
 	var answerInput string
-	fmt.Scan(&answerInput)
+	fmt.Scanf("%s", &answerInput)
 	ch <- answerInput
 }
