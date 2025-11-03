@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
+	"github.com/redis/go-redis/v9"
 	"gopkg.in/yaml.v2"
 )
 
@@ -19,15 +23,23 @@ func MapHandler(pathsToURLs map[string]string) http.HandlerFunc {
 	}
 }
 
-func fileHandler(ext string, data *[]byte) (http.HandlerFunc, error) {
+func fileHandler(flag string) (http.HandlerFunc, error) {
+
+	data, oserr := os.ReadFile(flag)
+	if oserr != nil {
+		log.Fatalf("error reading file: %v", oserr)
+	}
+
+	ext := filepath.Ext(flag)
+
 	var parsed []pathToURL
 	var err error
 
 	switch ext {
 	case ".yaml", ".yml":
-		parsed, err = parseYAML(*data)
+		parsed, err = parseYAML(data)
 	case ".json":
-		parsed, err = parseJSON(*data)
+		parsed, err = parseJSON(data)
 	default:
 		log.Fatalf("unsupported file type: %s", ext)
 	}
@@ -36,6 +48,29 @@ func fileHandler(ext string, data *[]byte) (http.HandlerFunc, error) {
 	}
 	pathMap := buildMap(parsed)
 	return MapHandler(pathMap), err
+}
+
+func redisHandler(addr string) (http.HandlerFunc, error) {
+	var ctx = context.Background()
+	rdb := redis.NewClient(&redis.Options{
+		Addr: addr,
+		DB:   0, // default
+	})
+
+	keys, err := rdb.Keys(ctx, "*").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	pathMap := make(map[string]string)
+	for _, key := range keys {
+		url, err := rdb.Get(ctx, key).Result()
+		if err == nil {
+			pathMap[key] = url
+		}
+	}
+
+	return MapHandler(pathMap), nil
 }
 
 func buildMap(pathsToURLs []pathToURL) (builtMap map[string]string) {
