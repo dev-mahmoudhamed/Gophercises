@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/youtube",
+    "url": "https://www.youtube.com"
+  },
+  {
+    "path": "/reddit",
+    "url": "https://www.reddit.com"
+  },
+  {
+    "path": "/golang",
+    "url": "https://go.dev"
+  },
+  {
+    "path": "/stackoverflow",
+    "url": "https://stackoverflow.com/questions/tagged/go"
+  },
+  {
+    "path": "/openai",
+    "url": "https://openai.com"
+  }
+]

@@ -1,33 +1,34 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
+	"os"
+	"path/filepath"
 )
 
 func main() {
 
-	// pathsToUrls := map[string]string{
-	// 	"/google": "https://google.com",
-	// 	"/yahoo":  "https://yahoo.com",
-	// }
-	// mapHandler := MapHandler(pathsToUrls)
+	filePath := flag.String("file", "config.yaml", "Path to a YAML or JSON config file")
+	flag.Parse()
+	data, err := os.ReadFile(*filePath)
+	if err != nil {
+		log.Fatalf("error reading file: %v", err)
+	}
 
-	yamlData := `
-- path: /urlshort
-  url: https://github.com/gophercises/urlshort
-- path: /urlshort-final
-  url: https://github.com/gophercises/urlshort/tree/solution
-`
+	ext := filepath.Ext(*filePath)
+	handler, err := fileHandler(ext, &data)
 
-	yamlData = strings.TrimSpace(yamlData)
+	if err != nil {
+		log.Fatalf("error parsing file: %v", err)
+	}
 
-	yamlHandler, err := YAMLHandler([]byte(yamlData))
 	if err != nil {
 		log.Fatalf("error creating YAML handler: %v", err)
 	}
+
 	fmt.Println("🚀 Server running on http://localhost:8080")
-	http.ListenAndServe(":8080", yamlHandler)
+	http.ListenAndServe(":8080", handler)
 }

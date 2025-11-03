@@ -1,0 +1,8 @@
+- path: /google
+  url: https://www.google.com
+- path: /github
+  url: https://github.com
+- path: /docs
+  url: https://go.dev/doc
+- path: /news
+  url: https://news.ycombinator.com
