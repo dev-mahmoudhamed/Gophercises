@@ -41,7 +41,6 @@ func main() {
 
 		answerCh := make(chan string)
 		go readUserAnswer(answerCh)
-
 		timeout := time.After(time.Second * time.Duration(*limit))
 
 		select {
@@ -60,6 +59,6 @@ func main() {
 
 func readUserAnswer(ch chan<- string) {
 	var answerInput string
-	fmt.Scanf("%s", &answerInput)
+	fmt.Scanf("%s\n", &answerInput)
 	ch <- answerInput
 }
