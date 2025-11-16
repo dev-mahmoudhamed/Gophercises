@@ -16,7 +16,7 @@ type Link struct {
 func main() {
 
 	var filePath string
-	flag.StringVar(&filePath, "file", "ex3.html", "path to HTML file")
+	flag.StringVar(&filePath, "file", "ex1.html", "path to HTML file")
 	flag.Parse()
 
 	file, err := os.Open(filePath)
