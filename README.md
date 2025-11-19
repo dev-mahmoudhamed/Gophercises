@@ -30,5 +30,3 @@ go run . -h
 # Run the code
 go run .
 ```
-
-test github push
