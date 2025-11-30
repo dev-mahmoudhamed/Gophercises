@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiet Hacker News</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: white;
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stories-container {
+            padding: 2rem;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .story-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+            animation: slideIn 0.4s ease-out backwards;
+            animation-delay: calc(var(--item-index) * 0.03s);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .story-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .story-content {
+            flex: 1;
+            padding-right: 1rem;
+        }
+
+        .story-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .story-link {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .story-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .story-url {
+            font-size: 0.85rem;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .story-rank {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            min-width: 3rem;
+            text-align: right;
+        }
+
+        .story-item:hover .story-rank {
+            color: #667eea;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .fetch-time {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .time-icon {
+            font-size: 1.2rem;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .stats {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .stories-container {
+                padding: 1rem;
+            }
+
+            .story-item {
+                flex-direction: column-reverse;
+                align-items: flex-start;
+            }
+
+            .story-rank {
+                align-self: flex-end;
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🔥 Quiet Hacker News</h1>
+            <p class="subtitle">Top {{.TotalStories}} Stories from Hacker News</p>
+        </header>
+
+        <div class="stories-container">
+            <ul class="story-list">
+                {{range $key, $story := .Stories}}
+                <li class="story-item" style="--item-index: {{$key}}">
+                    <div class="story-content">
+                        <div class="story-title">
+                            <a href="{{$story.URL}}" class="story-link" target="_blank" rel="noopener noreferrer">
+                                {{$story.Title}}
+                            </a>
+                        </div>
+                        <div class="story-url">
+                            <span>🔗</span>
+                            <span>{{$story.URL}}</span>
+                        </div>
+                    </div>
+                    <div class="story-rank">#{{$key}}</div>
+                </li>
+                {{end}}
+            </ul>
+        </div>
+
+        <footer>
+            <div class="fetch-time">
+                <span class="time-icon">⏱️</span>
+                <span>Fetched in {{.Duration}}</span>
+            </div>
+            <div class="stats">
+                Displaying {{.TotalStories}} stories • Updated just now
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
